@@ -1,4 +1,4 @@
-import os
+import os  # මෙතන 'I' අකුර simple කළා
 import threading
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -14,7 +14,6 @@ import google.generativeai as genai
 from gtts import gTTS
 
 # 1. AI මොළය සැකසීම
-# ආරක්ෂාව සඳහා API Key එක වෙනම තියාගන්න.
 API_KEY = "AIzaSyBgKdusBvHgY1-CqWeTqVGnW0hCXN_aR_c"
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
@@ -32,7 +31,8 @@ class SaraAI(BoxLayout):
         self.scroll = ScrollView()
         self.chat_log = Label(
             text="සාරා: ආයුබෝවන්! මම සාරා. ඔයාට කොහොමද මම උදව් කරන්න ඕනේ?\n\n", 
-            size_hint_y=None, halign='left', valign='top', markup=True
+            size_hint_y=None, halign='left', valign='top', markup=True,
+            font_name='iskoola.ttf' # සිංහල පෙනීමට
         )
         self.chat_log.bind(texture_size=self.chat_log.setter('size'))
         self.bind(width=lambda *x: self.chat_log.setter('text_size')(self.chat_log, (self.width - 40, None)))
@@ -40,10 +40,16 @@ class SaraAI(BoxLayout):
         self.add_widget(self.scroll)
 
         input_layout = BoxLayout(size_hint_y=None, height=60, spacing=10)
-        self.user_input = TextInput(hint_text='මොනවා හරි අහන්න...', multiline=False, font_size='18sp')
+        self.user_input = TextInput(
+            hint_text='මොනවා හරි අහන්න...', multiline=False, font_size='18sp',
+            font_name='iskoola.ttf' # සිංහල පෙනීමට
+        )
         input_layout.add_widget(self.user_input)
 
-        self.send_btn = Button(text="යවන්න", size_hint_x=None, width=100, background_color=(0, 0.6, 0.9, 1))
+        self.send_btn = Button(
+            text="යවන්න", size_hint_x=None, width=100, background_color=(0, 0.6, 0.9, 1),
+            font_name='iskoola.ttf' # සිංහල පෙනීමට
+        )
         self.send_btn.bind(on_press=self.send_message)
         input_layout.add_widget(self.send_btn)
         self.add_widget(input_layout)
@@ -62,7 +68,6 @@ class SaraAI(BoxLayout):
             response = model.generate_content(prompt)
             reply = response.text
             Clock.schedule_once(lambda dt: self.update_ui(reply))
-            # Audio එක වෙනම thread එකක වැඩ කරන්න දෙන්න
             threading.Thread(target=self.speak, args=(reply,)).start()
         except Exception as e:
             Clock.schedule_once(lambda dt: self.update_ui("සමාවෙන්න, මට සම්බන්ධ වෙන්න බැහැ."))
@@ -72,7 +77,6 @@ class SaraAI(BoxLayout):
         self.chat_log.text += f"[color=00ccff]සාරා:[/color] {sara_reply}\n\n"
 
     def speak(self, text):
-        # Android හි Crash වීම වැළැක්වීමට try-except වැඩි දියුණු කර ඇත
         try:
             if platform == 'android':
                 from android.permissions import request_permissions, Permission
@@ -83,14 +87,12 @@ class SaraAI(BoxLayout):
                 
             audio_path = os.path.join(app_dir, "sara_voice.mp3")
             
-            # පරණ ෆයිල් එකක් තිබේ නම් මකා දමන්න
             if os.path.exists(audio_path):
                 os.remove(audio_path)
 
             tts = gTTS(text=text, lang='si')
             tts.save(audio_path)
             
-            # SoundLoader එක main thread එකේ වැඩ කරන්න ඕනේ
             Clock.schedule_once(lambda dt: self.play_audio(audio_path))
         except Exception as e:
             print(f"Speak Error: {e}")
