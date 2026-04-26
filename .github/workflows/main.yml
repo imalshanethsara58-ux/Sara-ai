@@ -20,7 +20,6 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          buildozer android clean
           buildozer -v android debug
         env:
           APP_ANDROID_ACCEPT_SDK_LICENSE: "True"
