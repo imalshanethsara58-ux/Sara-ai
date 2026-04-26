@@ -13,7 +13,7 @@ android.permissions = INTERNET, RECORD_AUDIO, WRITE_EXTERNAL_STORAGE, READ_EXTER
 
 # Android Settings
 # Warning එක මගහරින්න SDK එක මෙතනින් අයින් කරා, එතකොට auto-select වෙනවා
-android.api = 33
+#android.api = 33
 android.minapi = 21
 android.ndk = 25b
 android.archs = armeabi-v7a, arm64-v8a
