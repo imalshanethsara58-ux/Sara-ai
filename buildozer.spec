@@ -28,6 +28,7 @@ android.allow_backup = True
 
 # (section) මේක 'True' කරන්න අනිවාර්යයෙන්ම (License ප්‍රශ්නය විසඳන්න)
 android.accept_sdk_license = True
+p4a.branch = master
 
 # (section) Python settings
 python_api = 27
