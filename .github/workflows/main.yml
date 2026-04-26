@@ -20,11 +20,14 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # මෙතනදී 'yes' කෑල්ල නැතුව කෙලින්ම රන් කරමු, spec එකේ license accept කරලා තියෙන නිසා
-          buildozer -v android debug
+          # මෙතනදී Licenses ඔක්කොම Auto-Accept වෙන්න හදල තියෙන්නේ
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | buildozer -v android debug
         env:
-          # මේක වැදගත්, එතකොට licenses ඔටෝම accept වෙනවා
           APP_ANDROID_ACCEPT_SDK_LICENSE: "True"
+          # මෙන්න මේක වැදගත් Android SDK ප්‍රශ්න මගහරින්න
+          ANDROID_SDK_HOME: "/home/runner/.android"
 
       - name: Upload APK
         if: success()
