@@ -18,21 +18,14 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --upgrade "buildozer>=1.5.0" Cython kivy gTTS google-generativeai
 
-      - name: Pre-accept Android Licenses
-        run: |
-          # මේ කොටසින් Android SDK එකට අවශ්‍ය ඔක්කොම Licenses කලින්ම Accept කරනවා
-          mkdir -p "$HOME/.android"
-          touch "$HOME/.android/repositories.cfg"
-          # Android SDK tools හරහා licenses accept කිරීම
-          yes | sdkmanager --licenses || true
-
       - name: Build with Buildozer
         run: |
-          # කෙලින්ම බිල්ඩ් එක පටන් ගමු
-          buildozer -v android debug
+          # මෙන්න මෙතන තමයි ඔයා ඇහුව magic පේළිය තියෙන්නේ
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          printf 'y\n%.0s' {1..100} | buildozer -v android debug
         env:
           APP_ANDROID_ACCEPT_SDK_LICENSE: "True"
-          # GitHub runner එකේ Android SDK තියෙන තැන
           ANDROID_SDK_ROOT: "/usr/local/lib/android/sdk"
 
       - name: Upload APK
