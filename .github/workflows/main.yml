@@ -2,25 +2,38 @@ name: Build APK
 on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # ස්ථාවර වර්ෂන් එකක් පාවිච්චි කරමු
     steps:
       - uses: actions/checkout@v4
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Install dependencies
+          python-version: '3.10'
+
+      - name: Install System Dependencies
         run: |
           sudo apt update
-          # මෙතන libtinfo5 වෙනුවට libtinfo6 දාලා තියෙන්නේ
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev
-          pip3 install --upgrade buildozer cython==0.29.33 kivy gTTS google-generativeai
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev libltdl-dev build-essential
+          pip3 install --upgrade pip
+          pip3 install --upgrade Cython==0.29.33 virtualenv
+
+      - name: Install Buildozer and Kivy
+        run: |
+          pip3 install --user buildozer
+          # Buildozer path එකට ඇඩ් කරගමු
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Build with Buildozer
         run: |
-          # licenses auto-accept වෙන්න yes | පාවිච්චි කරනවා
+          # මෙතන yes | ගැහුවම license ප්‍රශ්න එන්නේ නැහැ
           yes | buildozer android debug
+        env:
+          # සමහර වෙලාවට මෙහෙම දුන්නම එරර් අඩු වෙනවා
+          USER: root
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: SARA-AI-APK
           path: bin/*.apk
